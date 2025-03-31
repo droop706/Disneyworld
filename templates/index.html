@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Button Click Example</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .button-container {
+            margin-bottom: 20px;
+        }
+        .button-container button {
+            margin: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .result-container {
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .section-title {
+            margin-top: 40px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .date-container {
+            margin-top: 40px;
+        }
+        .overview-container {
+            margin-top: 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-top: 2px solid #ccc;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Selecteer periode.</h1>
+
+    <div class="date-container">
+        <label for="start-date">Begin dag:</label>
+        <input type="date" id="start-date" onchange="updateOverview()">
+        <br><br>
+        <label for="end-date">Eind Date:</label>
+        <input type="date" id="end-date" onchange="updateOverview()">
+    </div>
+
+    <div class="section-title">Selecteer voorkeur weer</div>
+
+    <div class="button-container">
+        <button onclick="selectWeather('Zonnig')">Zonnig</button>
+        <button onclick="selectWeather('Beste dag')">Beste dag</button>
+        <button onclick="selectWeather('Matig')">Matig</button>
+        <button onclick="selectWeather('Geen voorkeur')">Geen voorkeur</button>
+    </div>
+
+    <div class="result-container" id="result-container-weather">
+    </div>
+
+    <div class="section-title">Selecteer een attractie of meerdere attracties</div>
+
+    <div class="button-container">
+        <button onclick="selectAttraction('7 dwarfs')">7 Dwarfs</button>
+        <button onclick="selectAttraction('coc0nuts')">Coc0nuts</button>
+        <button onclick="selectAttraction('twister')">Twister</button>
+        <button onclick="selectAttraction('railgun')">Bouncer</button>
+    </div>
+
+    <div class="result-container" id="result-container-attractions">
+    </div>
+
+    <div class="overview-container" id="overview-container">
+    </div>
+
+    <button onclick="sendData()">Plan</button>
+
+    <script>
+        // locale variabelen
+        let selectedAttractions = [];
+        let lastWeather = '';
+        let startDate = '';
+        let endDate = '';
+
+        function selectAttraction(attraction) {
+            if (!selectedAttractions.includes(attraction)) {
+                selectedAttractions.push(attraction);
+            }
+            updateOverview();
+        }
+
+        function selectWeather(weather) {
+            lastWeather = weather;
+            updateOverview();
+        }
+
+        function updateOverview() {
+            startDate = document.getElementById("start-date").value;
+            endDate = document.getElementById("end-date").value;
+
+            let overviewMessage = "Selected options:\n\n";
+
+            if (startDate && endDate) {
+                overviewMessage += `Start Date: ${startDate}\nEnd Date: ${endDate}\n`;
+            } else {
+                overviewMessage += "Please select both start and end dates.\n";
+            }
+
+            if (lastWeather) {
+                overviewMessage += `Weather preference: ${lastWeather}\n`;
+            } else {
+                overviewMessage += "Please select a weather preference.\n";
+            }
+
+            if (selectedAttractions.length > 0) {
+                overviewMessage += `Attractions: ${selectedAttractions.join(", ")}\n`;
+            } else {
+                overviewMessage += "Please select at least one attraction.\n";
+            }
+
+            document.getElementById("overview-container").textContent = overviewMessage;
+        }
+
+        function sendData() {
+            const data = {
+                start_date: startDate,
+                end_date: endDate,
+                weather_preference: lastWeather,
+                attractions: selectedAttractions
+            };
+
+            //
+            console.log("Sending data:", data);
+
+            // Code om API call naar backend te sturen.
+            fetch('http://127.0.0.1:5000/api/plan', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Success:', data);
+                alert("Plan successfully sent!");
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert("There was an error sending your plan.");
+            });
+        }
+    </script>
+
+</body>
+</html>
+
+
