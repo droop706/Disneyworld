@@ -1,36 +1,40 @@
 import requests
+import pandas as pd
 from weather_parameters import COMMON_PARAMETERS, HISTORICAL_PARAMETERS, HTTP_RESPONSE_SUCCESS
 
-def get_forecasted_weather(forecast_days):
-    url = 'https://api.open-meteo.com/v1/forecast'
-    params = {**COMMON_PARAMETERS, "forecast_days": forecast_days}
-    response = requests.get(url, params=params)
+class WeatherDataFromAPI:
+    @staticmethod
+    def get_forecasted_weather(forecast_days):
+        url = 'https://api.open-meteo.com/v1/forecast'
+        params = {**COMMON_PARAMETERS, 'forecast_days': forecast_days}
+        response = requests.get(url, params=params)
 
-    if response.status_code == HTTP_RESPONSE_SUCCESS:
-        return response.json()
-    else:
-        print("Error fetching weather forecast")
-        return None
+        if response.status_code == HTTP_RESPONSE_SUCCESS:
+            return WeatherDataFromAPI.json_to_dataframe(response.json())
+        else:
+            print('Error fetching weather forecast')
+            return None
 
+    @staticmethod
+    def get_historical_weather():
+        url = 'https://archive-api.open-meteo.com/v1/archive'
+        params = {**COMMON_PARAMETERS, **HISTORICAL_PARAMETERS}
+        response = requests.get(url, params=params)
 
-def get_historical_weather():
-    url = "https://archive-api.open-meteo.com/v1/archive"
-    params = {**COMMON_PARAMETERS, **HISTORICAL_PARAMETERS}
-    response = requests.get(url, params=params)
+        if response.status_code == HTTP_RESPONSE_SUCCESS:
+            return WeatherDataFromAPI.json_to_dataframe(response.json())
+        else:
+            print('Error fetching historical weather data')
+            return None
 
-    if response.status_code == 200:
-        return response.json()
-    else:
-        print("Error fetching historical weather data")
-        return None
+    @staticmethod
+    def json_to_dataframe(weather_json):
+        """Converts JSON weather data into DataFrame."""
+        if not weather_json:
+            print('No data to process')
+            return None
 
-if __name__ == "__main__":
-    forecast_days = int(input("Enter number of forecast days (max 16): "))
-    weather_forecast_data = get_forecasted_weather(forecast_days)
-    historical_forecast_data = get_historical_weather()
+        df_weather = pd.DataFrame(weather_json['hourly'])
+        df_weather['date'] = pd.to_datetime(weather_json['hourly']['time'])
 
-    if weather_forecast_data:
-        print(weather_forecast_data)
-
-    if historical_forecast_data:
-        print(historical_forecast_data)
+        return df_weather
