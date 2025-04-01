@@ -1,11 +1,5 @@
 # Ignore data files
-data/
-
-# Ignore poc files
-poc/
-
-# Ignore .idea files
-.idea/
+# data/
 
 # Created by https://gitignore.org
 # Python.gitignore
