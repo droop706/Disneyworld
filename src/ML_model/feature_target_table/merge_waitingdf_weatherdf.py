@@ -10,6 +10,6 @@ class MergeWaitingDFWeatherDF:
         self.weather_df = weather_df
 
     def merge_df(self):
-        merged_df = pd.merge(self.weather_df, self.waiting_df, how='left', left_on='datetime', right_on='datetime')
+        merged_df = pd.merge(self.weather_df, self.waiting_df, on='datetime', how='inner')
         return merged_df
 
