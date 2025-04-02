@@ -7,30 +7,86 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 20px;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url("/static/images/disneybackground.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
+
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            width: 50%;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            margin-top: 10em;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .plan-button {
+            background-color: lightblue;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .plan-button:hover {
+            background-color: darkblue;
+        }
+
         .button-container {
             margin-bottom: 20px;
         }
+
         .button-container button {
             margin: 5px;
             padding: 10px 20px;
             font-size: 16px;
             cursor: pointer;
+            background-color: white;
+            color: lightblue;
+            border: 2px solid lightblue;
+            border-radius: 25px;
+            transition: all 0.3s ease;
         }
-        .result-container {
-            margin-top: 20px;
-            font-size: 18px;
-            font-weight: bold;
+
+        .button-container button.selected {
+            color: darkblue;
+            border-color: darkblue;
         }
+
+        .date-container {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
         .section-title {
             margin-top: 40px;
             font-size: 24px;
             font-weight: bold;
         }
-        .date-container {
-            margin-top: 40px;
-        }
+
         .overview-container {
             margin-top: 40px;
             font-size: 18px;
@@ -42,84 +98,110 @@
 </head>
 <body>
 
-    <h1>Selecteer periode.</h1>
+    <div class="container">
+        <div style="display: flex; align-items: center;">
+            <h1>Disney World Uitstap Dagplanner</h1>
+            <button class="plan-button" onclick="sendData()">Plan</button>
+        </div>
 
-    <div class="date-container">
-        <label for="start-date">Begin dag:</label>
-        <input type="date" id="start-date" onchange="updateOverview()">
-        <br><br>
-        <label for="end-date">Eind Date:</label>
-        <input type="date" id="end-date" onchange="updateOverview()">
+        <div class="section-title">Wanneer?</div>
+        <br>
+        <div class="date-container">
+            <label for="start-date">Van:</label>
+            <input type="date" id="start-date" onchange="updateOverview()" min="" max="">
+            <label for="end-date"> - tot:</label>
+            <input type="date" id="end-date" onchange="updateOverview()" min="" max="">
+            <div class="button-container" id="weekend-weekday-container">
+                <button onclick="selectWeekOrWeekday('Weekdag')">Weekdag</button>
+                <button onclick="selectWeekOrWeekday('Weekend')">Weekend</button>
+            </div>
+        </div>
+
+        <div class="section-title">Weer?</div>
+
+        <div class="button-container" id="weather-container">
+            <button onclick="selectWeather('Zonnig')">Zonnig</button>
+            <button onclick="selectWeather('Beste dag')">Beste dag</button>
+            <button onclick="selectWeather('Matig')">Matig</button>
+            <button onclick="selectWeather('Geen voorkeur')">Geen voorkeur</button>
+        </div>
+
+        <div class="section-title">Welke attracties? Max 4.</div>
+
+        <div class="button-container" id="attraction-container">
+            <button onclick="selectAttraction('kilimanjaro_safaris')">Kilimanjaro Safaris</button>
+            <button onclick="selectAttraction('expedition_everest')">Expedition Everest</button>
+            <button onclick="selectAttraction('dinosaur')">Dinosaur</button>
+            <button onclick="selectAttraction('spaceship_earth')">Spaceship Earth</button>
+            <button onclick="selectAttraction('soarin')">Soarin</button>
+            <button onclick="selectAttraction('rock_n_rollercoaster')">Rock N Rollercoaster</button>
+            <button onclick="selectAttraction('toy_story_mania')">Toy Story Mania</button>
+            <button onclick="selectAttraction('splash_mountain')">Splash Mountain</button>
+            <button onclick="selectAttraction('pirates_of_caribbean')">Pirates Of Caribbean</button>
+            <button onclick="selectAttraction('navi_river')">Navi River</button>
+            <button onclick="selectAttraction('flight_of_passage')">Flight of Passage</button>
+            <button onclick="selectAttraction('slinky_dog')">Slinky Dog</button>
+            <button onclick="selectAttraction('alien_saucers')">Alien Saucers</button>
+            <button onclick="selectAttraction('7_dwarfs_train')">7 Dwarfs Train</button>
+        </div>
+
+        <div class="overview-container" id="overview-container">
+        </div>
+        <div class="overview-container"> Gebruikmakende van ML en hun eigen scoring-algoritme geven Frank, Michael, Miguel
+        en Stijn je de beste dag en moment om jou attracties te gaan bezoeken in Disney World!
+        </div>
     </div>
-
-    <div class="section-title">Selecteer voorkeur weer</div>
-
-    <div class="button-container">
-        <button onclick="selectWeather('Zonnig')">Zonnig</button>
-        <button onclick="selectWeather('Beste dag')">Beste dag</button>
-        <button onclick="selectWeather('Matig')">Matig</button>
-        <button onclick="selectWeather('Geen voorkeur')">Geen voorkeur</button>
-    </div>
-
-    <div class="result-container" id="result-container-weather">
-    </div>
-
-    <div class="section-title">Selecteer een attractie of meerdere attracties</div>
-
-    <div class="button-container">
-        <button onclick="selectAttraction('7 dwarfs')">7 Dwarfs</button>
-        <button onclick="selectAttraction('coc0nuts')">Coc0nuts</button>
-        <button onclick="selectAttraction('twister')">Twister</button>
-        <button onclick="selectAttraction('railgun')">Bouncer</button>
-    </div>
-
-    <div class="result-container" id="result-container-attractions">
-    </div>
-
-    <div class="overview-container" id="overview-container">
-    </div>
-
-    <button onclick="sendData()">Plan</button>
 
     <script>
-        // locale variabelen
         let selectedAttractions = [];
         let lastWeather = '';
         let startDate = '';
         let endDate = '';
+        let selectedDayType = '';
 
-        function selectAttraction(attraction) {
-            if (!selectedAttractions.includes(attraction)) {
-                selectedAttractions.push(attraction);
-            }
-            updateOverview();
-        }
+        const today = new Date();
+        const maxDate = new Date();
+        maxDate.setDate(today.getDate() + 16);
 
-        function selectWeather(weather) {
-            lastWeather = weather;
-            updateOverview();
-        }
+        const formatDate = (date) => date.toISOString().split('T')[0];
+
+        document.getElementById('start-date').min = formatDate(today);
+        document.getElementById('start-date').max = formatDate(maxDate);
+        document.getElementById('end-date').min = formatDate(today);
+        document.getElementById('end-date').max = formatDate(maxDate);
 
         function updateOverview() {
             startDate = document.getElementById("start-date").value;
             endDate = document.getElementById("end-date").value;
 
-            let overviewMessage = "Selected options:\n\n";
+            if (startDate && endDate && new Date(endDate) < new Date(startDate)) {
+                alert("End date must be later than or equal to start date.");
+                document.getElementById("end-date").value = startDate;
+                return;
+            }
+
+            let overviewMessage = "Overzicht van uw keuzes:\n\n";
 
             if (startDate && endDate) {
-                overviewMessage += `Start Date: ${startDate}\nEnd Date: ${endDate}\n`;
+                overviewMessage += `gewenste dag tussen ${startDate}\nen ${endDate}, `;
             } else {
                 overviewMessage += "Please select both start and end dates.\n";
             }
 
             if (lastWeather) {
-                overviewMessage += `Weather preference: ${lastWeather}\n`;
+                overviewMessage += `weer: ${lastWeather.toLowerCase()}, `;
             } else {
                 overviewMessage += "Please select a weather preference.\n";
             }
 
+            if (selectedDayType) {
+                overviewMessage += `type dag: ${selectedDayType.toLowerCase()}, `;
+            } else {
+                overviewMessage += "Please select a day type (weekend or weekday).\n";
+            }
+
             if (selectedAttractions.length > 0) {
-                overviewMessage += `Attractions: ${selectedAttractions.join(", ")}\n`;
+                overviewMessage += ` Attracties: ${selectedAttractions.join(", ")}\n.`;
             } else {
                 overviewMessage += "Please select at least one attraction.\n";
             }
@@ -132,33 +214,88 @@
                 start_date: startDate,
                 end_date: endDate,
                 weather_preference: lastWeather,
-                attractions: selectedAttractions
+                attractions: selectedAttractions,
+                day_type: selectedDayType
             };
 
-            //
-            console.log("Sending data:", data);
-
-            // Code om API call naar backend te sturen.
-            fetch('http://127.0.0.1:5000/api/plan', {
+            fetch('/DisneyWorldDagPlanner/planning', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
                 body: JSON.stringify(data)
             })
-            .then(response => response.json())
-            .then(data => {
-                console.log('Success:', data);
-                alert("Plan successfully sent!");
+            .then(response => {
+                if (response.ok) {
+                    console.log('Success:', response);
+                    window.location.href = '/DisneyWorldDagPlanner/planning';
+                } else {
+                    console.error('Error:', response);
+                }
             })
             .catch((error) => {
                 console.error('Error:', error);
-                alert("There was an error sending your plan.");
             });
         }
-    </script>
 
+        function selectAttraction(attraction) {
+            if (selectedAttractions.length >= 4 && !selectedAttractions.includes(attraction)) {
+                alert('You can only select up to 4 attractions.');
+                return;
+            }
+
+            const button = document.querySelector(`button[onclick="selectAttraction('${attraction}')"]`);
+            button.classList.toggle("selected");
+
+            const index = selectedAttractions.indexOf(attraction);
+            if (index === -1) {
+                selectedAttractions.push(attraction);
+            } else {
+                selectedAttractions.splice(index, 1);
+            }
+
+            updateOverview();
+        }
+
+        function selectWeather(weather) {
+            const weatherButtons = document.querySelectorAll('#weather-container button');
+            weatherButtons.forEach(button => button.classList.remove('selected'));
+
+            const button = document.querySelector(`button[onclick="selectWeather('${weather}')"]`);
+            button.classList.add('selected');
+
+            lastWeather = weather;
+
+            updateOverview();
+        }
+
+        function selectWeekOrWeekday(dayType) {
+            const dayButtons = document.querySelectorAll('#weekend-weekday-container button');
+            const button = document.querySelector(`button[onclick="selectWeekOrWeekday('${dayType}')"]`);
+
+            if (button.classList.contains('selected')) {
+                button.classList.remove('selected');
+                selectedDayType = 'Geen voorkeur';
+            } else {
+                if (selectedDayType === 'Geen voorkeur') {
+                    selectedDayType = dayType;
+                } else if (selectedDayType === '' || selectedDayType !== dayType) {
+                    selectedDayType = dayType;
+                } else if (selectedDayType === dayType) {
+                    selectedDayType = 'Geen voorkeur';
+                }
+
+                dayButtons.forEach(btn => {
+                    if (btn !== button) {
+                        btn.classList.remove('selected');
+                    }
+                });
+
+                button.classList.add('selected');
+            }
+
+            updateOverview();
+        }
+    </script>
 </body>
 </html>
-
-

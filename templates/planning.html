@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disney World dag planner</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url("/static/images/disneyworld-fireworks-rphzl5bi9vdyao2v.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            width: 50%;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+        }
+        .header-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+        .reset-icon {
+            position: absolute;
+            left: 0;
+            cursor: pointer;
+            width: 25px;
+            height: auto;
+        }
+        .header-container h1 {
+            color: darkblue;
+            font-size: 2.5em;
+            margin-left: 30px;
+        }
+        .header-container img {
+            width: 100px;
+            height: auto;
+        }
+        h2 {
+            color: darkblue;
+            font-size: 2em;
+        }
+        h3 {
+            color: darkblue;
+            font-size: 1.5em;
+        }
+        p {
+            font-size: 1.2em;
+            margin: 10px 0;
+        }
+        strong {
+            font-weight: bold;
+            color: darkblue;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="header-container">
+            <img src="/static/images/reset_icon.png" alt="Reset Icon" class="reset-icon" onclick="resetSession()">
+            <h1>Disney World dag planner</h1>
+            <img src="/static/images/add-placeholder.jpg" alt="Reis Icon">
+        </div>
+
+        <h2>Hier is je geplande dag!</h2>
+
+        <p><strong>Startdatum:</strong> {{ start_date }}</p>
+        <p><strong>Einddatum:</strong> {{ end_date }}</p>
+        <p><strong>Voorgesteldedatum:</strong> {{ picked_date }}</p>
+        <p><strong>Weer Voorkeur:</strong> {{ weather_preference }}</p>
+        <p><strong>Dagtype:</strong> {{ day_type }}</p>
+
+        <h3>Geselecteerde Attracties:</h3>
+        {% if attractions %}
+            <ul>
+                {% for attraction in attractions %}
+                    <li>{{ attraction }} - Tijd: {{ attraction_times[attraction] }}</li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>Geen attracties geselecteerd.</p>
+        {% endif %}
+    </div>
+
+    <script>
+        function resetSession() {
+            fetch('/clear_session', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/DisneyWorldDagPlanner/home';
+                } else {
+                    console.error('Fout bij het wissen van de sessie');
+                }
+            })
+            .catch((error) => {
+                console.error('Fout:', error);
+            });
+        }
+    </script>
+
+</body>
+</html>
