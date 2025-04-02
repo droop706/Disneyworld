@@ -23,15 +23,15 @@ def planning():
             return jsonify({'error': 'Invalid number of attractions'}), 400
         #backend!!!!!!!!!!!!!!!hier!!!!!!!!!!!!!!!!!!!!!!!!!
         odf = OptimalDayFinder(start_date, end_date, day_type, weather_preference, attractions, "Cool model")
-
+        odf_output = odf.plan()
         #output!!!!!!!!!!!!!!!!hier!!!!!!!!!!!!
         session['start_date'] = start_date
         session['end_date'] = end_date
         session['weather_preference'] = weather_preference
-        session['attractions'] = odf.plan()[0]
-        session['attraction_times'] = odf.plan()[1]
+        session['attractions'] = odf_output[0]
+        session['attraction_times'] = odf_output[1]
         session['day_type'] = day_type
-        session['picked_date'] = odf.plan()[2]
+        session['picked_date'] = odf_output[2]
 
         return redirect(url_for('planning'))
 

@@ -1,5 +1,6 @@
 import random
 from datetime import datetime, timedelta
+from heatmapbackend import *
 
 class OptimalDayFinder:
     def __init__(self, begin_dag, eind_dag, dagtype, voorkeurweer, attracties, ML_model):
@@ -19,6 +20,10 @@ class OptimalDayFinder:
 
     def plan(self):
         attraction_times = {}
+        print(self.filter_dagen())
+        print(type(self.filter_dagen()[0]))
+        print(get_weather_forecast())
+        print(apply_intensity_on_dates(self.filter_dagen()))
         random_day = random.choice(self.filter_dagen())
         for attraction in self.attractions:
             random_hour = random.randint(9, 17)
