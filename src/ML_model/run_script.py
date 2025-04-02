@@ -18,6 +18,7 @@ if forecast_weather_data is not None:
     forecast_weather_data = WeatherDataCleaner(forecast_weather_data).clean_data()
     print('Cleaned Forecasted Data:\n', forecast_weather_data.head())
     print('Cleaned Forecasted Data:\n', forecast_weather_data.tail())
+print(forecast_weather_data.shape)
 
 if historical_weather_data is not None:
     historical_weather_data = WeatherDataCleaner(historical_weather_data).clean_data()
@@ -28,6 +29,7 @@ if historical_weather_data is not None:
 # Load attraction data
 data_loader = WaitingTimesDataLoader.data_from_directory()
 df_wait_raw = data_loader.load_waiting_times()
+attraction_names = data_loader.load_attraction_names()
 
 # Clean atraction data
 waiting_cleaner = WaitingTimesCleaner(df_wait_raw)
@@ -64,10 +66,31 @@ print(evaluate)
 #
 features_prediction = FeatureEngineering(forecast_weather_data)
 features_prediction_df = features_prediction.feature_engineer()
+datetime_df = forecast_weather_data[['datetime']]
 print(features_prediction_df.head(50))
 print(features_prediction_df.columns)
 
+# Check number of rows in feature dataframe
+print(f"Feature DataFrame Shape: {features_prediction_df.shape}")
+
 
 predictor = XGBoostPredictor()
-prediction = predictor.predict(features_prediction_df)
-print(prediction)
+prediction = predictor.predict(features_prediction_df, datetime_df, attraction_names)
+# Check number of rows in predictions
+print(f"Prediction Shape: {prediction.shape}")
+
+# Print first few rows of predictions
+print(prediction.head(50))
+
+prediction['date'] = prediction['datetime'].dt.date  # Creates a new 'date' column
+
+# Group by date and calculate the mean for each attraction
+df_daily_mean = prediction.groupby("date").mean().reset_index()
+
+# Display the result
+print(df_daily_mean.head(50))
+
+total_mean_per_attraction = df_daily_mean.mean(numeric_only=True)
+
+# Display the result
+print(total_mean_per_attraction)

@@ -26,6 +26,4 @@ class FeatureEngineering:
         self.df.drop(columns=['datetime'], inplace=True)
         return self.df
 
-# Example Usage:
-# fe = FeatureEngineering(merged_df)
-# final_df = fe.feature_engineer()
+

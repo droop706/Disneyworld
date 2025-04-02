@@ -13,7 +13,7 @@ class WaitingTimesDataLoader:
     @classmethod
     def data_from_directory(cls):
         """
-        Finds and sets the correct 'waiting times' folder path automatically.
+        Finds and sets the correct 'waiting times' folder path.
         """
         script_folder = os.path.dirname(os.path.abspath(__file__))  # This is in src/data_layer
         disney_world_folder = os.path.abspath(os.path.join(script_folder, "..", "..", ".."))
@@ -48,4 +48,19 @@ class WaitingTimesDataLoader:
 
         return df_wait_raw
 
+    def load_attraction_names(self):
+        """
+        Loads and returns a list of attraction names based on the CSV filenames.
+        """
+        attraction_names = []
 
+        for attraction in os.listdir(self.waiting_folder):
+            filename = os.path.join(self.waiting_folder, attraction)
+
+            if not filename.endswith('.csv'):
+                continue
+
+            # Extract the attraction name (remove file extension)
+            attraction_names.append(os.path.splitext(attraction)[0])
+
+        return attraction_names

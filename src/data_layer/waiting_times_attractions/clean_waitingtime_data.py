@@ -34,12 +34,13 @@ class WaitingTimesCleaner:
         Groups the waiting times data into 1 hour buckets.
 
         Parameters:
-        - df_wait (pd.DataFrame): DataFrame with cleaned waiting times.
+        - df_wait_cleaned (pd.DataFrame): DataFrame with cleaned waiting times.
 
         Returns:
         - pd.DataFrame: Aggregated DataFrame with hourly bins.
         """
         self.df_wait_cleaned['datetime'] = self.df_wait_cleaned['datetime'].dt.floor('H')
+        self.df_wait_cleaned = self.df_wait_cleaned[(self.df_wait_cleaned['datetime'].dt.hour >= 7) & (self.df_wait_cleaned['datetime'].dt.hour <= 22)]
 
         # Aggregate by hour (mean wait time per hour)
         df_hourly = self.df_wait_cleaned.groupby(['attraction', 'datetime']).agg(
@@ -49,13 +50,13 @@ class WaitingTimesCleaner:
 
     def pivot_attractions(self, df_hourly):
         """
-        Pivot the attraction data (SPOSTMIN and is_closed) to have separate columns for each attraction.
+        Pivot the attraction data (SPOSTMIN) to have separate columns for each attraction.
 
         Parameters:
-        - df_wait_ML (pd.DataFrame): DataFrame for model input with waiting times and closures.
+        - df_hourly (pd.DataFrame): DataFrame for model input with waiting times per hour.
 
         Returns:
-        - pd.DataFrame: Pivoted DataFrame with columns for each attraction's waiting time and closure status.
+        - pd.DataFrame: Pivoted DataFrame with columns for each attraction's waiting time.
         """
         # Pivot data to separate columns for each attraction's waiting time (SPOSTMIN) and is_closed status
         df_pivoted = df_hourly.pivot_table(index='datetime',
@@ -69,7 +70,7 @@ class WaitingTimesCleaner:
     def clean_and_prepare_data(self):
         """
         Perform the entire cleaning and preparation pipeline:
-        clean, bucketize, add closure flag, pivot.
+        clean, bucketize, pivot.
         This pipeline is useful for creating the machine learning model features table next
 
         Returns:

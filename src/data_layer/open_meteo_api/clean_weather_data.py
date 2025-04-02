@@ -23,7 +23,7 @@ class WeatherDataCleaner:
 
         # Rename columns for consistency
         self.df_weather_cleaned.rename(columns={'date': 'datetime'}, inplace=True)
-
+        self.df_weather_cleaned = self.df_weather_cleaned[(self.df_weather_cleaned['datetime'].dt.hour >= 7) & (self.df_weather_cleaned['datetime'].dt.hour <= 22)]
         # Delete time column
         self.df_weather_cleaned.drop(columns=['time'], inplace=True)
 
