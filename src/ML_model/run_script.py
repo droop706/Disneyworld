@@ -55,16 +55,15 @@ print(feature_df.columns)
 #print(feature_df['weather_code'].head())
 #print(type(feature_df['weather_code']))
 
-trainer = XGBoostTrainer(feature_df)
-trainer.hyperparameter_tuning()  # This updates trainer.best_params
-trainer.train_model()  # Train using the best parameters
-evaluate = trainer.evaluate_model()
-print(evaluate)
+#trainer = XGBoostTrainer(feature_df)
+#trainer.hyperparameter_tuning()  # This updates trainer.best_params
+#trainer.train_model()  # Train using the best parameters
+#evaluate = trainer.evaluate_model()
+#print(evaluate)
 
 #
 features_prediction = FeatureEngineering(forecast_weather_data)
 features_prediction_df = features_prediction.feature_engineer()
-features_prediction_df = features_prediction_df.drop(columns=['weather_code_95', 'weather_code_45'])
 print(features_prediction_df.head(50))
 print(features_prediction_df.columns)
 
