@@ -50,6 +50,7 @@ class XGBoostPredictor:
         X_new = self.preprocess_features(X_new)
         predictions = self.model.predict(X_new)
         predictions = np.maximum(predictions, 0)
+        predictions = np.round(predictions)
 
         predictions_df = pd.DataFrame(predictions, columns=attraction_names)
 
